@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import crypto from 'crypto';
-import { prisma } from '@repo/db';
+import { prisma, Prisma } from '@repo/db';
 import { CreateOrderSchema, RazorpayWebhookSchema } from '@repo/types';
 import { authenticateToken, validateBody, AuthRequest } from '../middleware/auth';
 import { deductStock } from '../services/inventory';
@@ -16,7 +16,7 @@ router.post('/', authenticateToken, validateBody(CreateOrderSchema), async (req:
 
   try {
     // Single transaction for calculations and insertions
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       let totalAmount = 0;
       const orderItemsData = [];
 

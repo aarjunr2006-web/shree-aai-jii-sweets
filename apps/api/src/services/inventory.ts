@@ -1,4 +1,4 @@
-import { prisma } from '@repo/db';
+import { prisma, Prisma } from '@repo/db';
 
 /**
  * Update stock level directly (used for restocking, manual counts, audit corrections).
@@ -9,7 +9,7 @@ export async function updateStock(
   quantity: number,
   userId?: string
 ) {
-  return await prisma.$transaction(async (tx) => {
+  return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     // 1. Verify product and branch exist
     const product = await tx.product.findUnique({ where: { id: productId } });
     if (!product) throw new Error(`Product not found: ${productId}`);
@@ -49,7 +49,7 @@ export async function deductStock(
   quantity: number,
   userId?: string
 ) {
-  return await prisma.$transaction(async (tx) => {
+  return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     // 1. Fetch current stock
     const stock = await tx.inventory.findUnique({
       where: {
